@@ -106,7 +106,7 @@ func Handler(rxstream rx.RxStream) rx.RxStream {
 ### 3. Run your serverless app
 
 ```go
-yomo run app.go -p 4242
+yomo run app.go -u localhost:9999 -n NoiseServerless
 ```
 
 ### Container
