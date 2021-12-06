@@ -9,9 +9,6 @@ import (
 	"github.com/yomorun/yomo/rx"
 )
 
-// NoiseDataKey represents the Tag of a Y3 encoded data packet.
-const NoiseDataKey = 0x10
-
 // ThresholdSingleValue is the threshold of a single value.
 const ThresholdSingleValue = 16
 
