@@ -94,7 +94,7 @@ yomo run app.go -m go.mod -u localhost:9999 -n NoiseServerless
 
 The case provides [Dockefile](https://github.com/yomorun/yomo-flow-noise-example/blob/main/Dockerfile) files for packaging into images.
 
-Also, you can get the official packaged image ([noise-flow](https://github.com/yomorun/yomo-flow-noise-example)) from the mirror repository.
+Also, you can get the official packaged image ([noise-flow](https://hub.docker.com/r/yomorun/noise-flow)) from the mirror repository.
 
 ```
 docker pull yomorun/noise-flow
@@ -105,6 +105,6 @@ docker pull yomorun/noise-flow
 You can run the service with the following command:
 
 ```
-docker run --rm --name noise-flow -p 4242:4242 yomorun/noise-flow:latest
+docker run --rm --name noise-flow -p 4242:4242 yomorun/noise-flow:0.0.6
 ```
 
