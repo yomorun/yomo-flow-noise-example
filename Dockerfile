@@ -8,7 +8,7 @@ RUN apt-get update && \
 RUN cp  /usr/share/zoneinfo/Asia/Shanghai /etc/localtime  && \
     echo 'Asia/Shanghai'  > /etc/timezone
 
-RUN go install github.com/yomorun/cli/yomo@v0.0.5; exit 0
+RUN go install github.com/yomorun/cli/yomo@v0.1.3; exit 0
 
 WORKDIR $GOPATH/src/github.com/yomorun/yomo-flow-noise-example
 COPY app.go go.mod ./

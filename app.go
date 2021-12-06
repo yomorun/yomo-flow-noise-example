@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/yomorun/y3-codec-golang"
-	"github.com/yomorun/yomo/pkg/rx"
+	"github.com/yomorun/yomo/rx"
 )
 
 // NoiseDataKey represents the Tag of a Y3 encoded data packet.
@@ -17,14 +17,15 @@ const ThresholdSingleValue = 16
 
 // NoiseData represents the structure of data
 type NoiseData struct {
-	Noise float32 `y3:"0x11"`
-	Time  int64   `y3:"0x12"`
-	From  string  `y3:"0x13"`
+	Noise float32 `json:"noise"` // Noise value
+	Time  int64   `json:"time"` // Timestamp (ms)
+	From  string  `json:"from"` // Source IP
 }
 
 // Print every value and alert for value greater than ThresholdSingleValue
 var computePeek = func(_ context.Context, i interface{}) (interface{}, error) {
-	value := i.(NoiseData)
+	value := i.(*NoiseData)
+	value.Noise = value.Noise / 10
 	rightNow := time.Now().UnixNano() / int64(time.Millisecond)
 	fmt.Println(fmt.Sprintf("[%s] %d > value: %f ⚡️=%dms", value.From, value.Time, value.Noise, rightNow-value.Time))
 
@@ -36,24 +37,17 @@ var computePeek = func(_ context.Context, i interface{}) (interface{}, error) {
 	return value, nil
 }
 
-// Unserialize data to `NoiseData` struct, transfer to next process
-var decode = func(v []byte) (interface{}, error) {
-	var mold NoiseData
-	err := y3.ToObject(v, &mold)
-	if err != nil {
-		return nil, err
-	}
-	mold.Noise = mold.Noise / 10
-	return mold, nil
-}
-
 // Handler will handle data in Rx way
-func Handler(rxstream rx.RxStream) rx.RxStream {
+func Handler(rxstream rx.Stream) rx.Stream {
 	stream := rxstream.
-		Subscribe(NoiseDataKey).
-		OnObserve(decode).
+		Unmarshal(json.Unmarshal, func() interface{} { return &NoiseData{} }).
 		Map(computePeek).
-		Encode(0x10)
+		Marshal(json.Marshal).
+		PipeBackToZipper(0x34)
 
 	return stream
+}
+
+func DataID() []byte {
+	return []byte{0x33}
 }
